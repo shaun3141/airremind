@@ -9,11 +9,13 @@ import {
   useGlobalConfig,
   CellRenderer
 } from '@airtable/blocks/ui';
+// import Settings from './settings';
 import { FieldType } from '@airtable/blocks/models';
 import { Icon } from '@airtable/blocks/ui';
 import * as request from 'request';
 import React, { useState } from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 
 const ENV = {
   DEV: {
@@ -22,7 +24,7 @@ const ENV = {
   PROD: {}
 };
 
-function TodoBlock() {
+function ReminderBlock() {
   const base = useBase();
 
   const globalConfig = useGlobalConfig();
@@ -35,6 +37,7 @@ function TodoBlock() {
   const [showSettings, setShowSettings] = useState(
     !(tableId && viewId && globalConfig.get('subjectField'))
   );
+  console.log(`1: ${showSettings}`);
 
   const tasks = records
     ? records.map(record => {
@@ -110,6 +113,7 @@ function TodoBlock() {
     ];
 
     const settingsDiplay = showSettings ? 'block' : 'none';
+    console.log(showSettings);
 
     return (
       <div style={{ display: settingsDiplay }}>
@@ -174,6 +178,31 @@ function TodoBlock() {
       config.get('ownerField') && table.getFieldById(config.get('ownerField'))
         ? table.getFieldById(config.get('ownerField'))
         : null;
+
+    let dueDateMessage = '';
+    if (
+      config.get('dueDateField') &&
+      table.getFieldById(config.get('dueDateField'))
+    ) {
+      let now = moment().startOf('day');
+      let dueDate = moment(
+        record.getCellValueAsString(config.get('dueDateField'))
+      ).startOf('day');
+      let daysDiff =
+        moment.duration(dueDate - now, 'millisecond') / 1000 / 60 / 60 / 24;
+
+      if (daysDiff > 1) {
+        dueDateMessage = `Due in ${daysDiff} days`;
+      } else if (daysDiff === 1) {
+        dueDateMessage = `Due tomorrow`;
+      } else if (daysDiff === 0) {
+        dueDateMessage = `Due today`;
+      } else if (daysDiff === -1) {
+        dueDateMessage = `Due yesterday`;
+      } else {
+        dueDateMessage = `Due ${daysDiff * -1} days ago`;
+      }
+    }
 
     return (
       <div
@@ -252,12 +281,12 @@ function TodoBlock() {
             style={{
               width: '40%',
               display: 'inline-block',
-              fontSize: '.4rem',
+              fontSize: '.7rem',
               textAlign: 'center',
               float: 'right'
             }}
           >
-            {'Due in X days'}
+            {config.get('dueDateField') ? dueDateMessage : ' '}
           </div>
         </div>
       </div>
@@ -328,7 +357,7 @@ function TodoBlock() {
   }
 }
 
-initializeBlock(() => <TodoBlock />);
+initializeBlock(() => <ReminderBlock />);
 // TODO:
 // If only 1 view exists, don't ask for view
 // Make Card View with Flex
