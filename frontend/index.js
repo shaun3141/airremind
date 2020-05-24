@@ -11,10 +11,16 @@ import {
 } from '@airtable/blocks/ui';
 import { FieldType } from '@airtable/blocks/models';
 import { Icon } from '@airtable/blocks/ui';
-// eslint-disable-next-line no-unused-vars
+import * as request from 'request';
 import React, { useState } from 'react';
+import _ from 'lodash';
 
-const BASE_API_ROUTE = '';
+const ENV = {
+  DEV: {
+    BASE_API: 'https://airreminder.herokuapp.com/'
+  },
+  PROD: {}
+};
 
 function TodoBlock() {
   const base = useBase();
@@ -92,11 +98,11 @@ function TodoBlock() {
       FieldType.URL
     ];
     const allowedDateTypes = [FieldType.DATE, FieldType.DATE_TIME];
-    const allowedStatusTypes = [
-      FieldType.CHECKBOX,
-      FieldType.SINGLE_SELECT,
-      FieldType.MULTIPLE_SELECTS
-    ];
+    // const allowedStatusTypes = [
+    //   FieldType.CHECKBOX,
+    //   FieldType.SINGLE_SELECT,
+    //   FieldType.MULTIPLE_SELECTS
+    // ];
     const allowedOwnerTypes = [
       FieldType.EMAIL,
       FieldType.SINGLE_COLLABORATOR,
@@ -110,49 +116,51 @@ function TodoBlock() {
         <TablePickerSynced globalConfigKey="selectedTableId" />
         <ViewPickerSynced table={table} globalConfigKey="selectedViewId" />
         <table style={{ width: '100%' }}>
-          <tr>
-            <FieldPickerTitle title="Subject" />
-            <FieldPickerTitle title="Owner" />
-          </tr>
-          <tr>
-            <td>
-              <FieldPickerSynced
-                table={table}
-                globalConfigKey="subjectField"
-                allowedTypes={allowedStringTypes}
-              />
-            </td>
-            <td>
-              <FieldPickerSynced
-                table={table}
-                shouldAllowPickingNone="true"
-                globalConfigKey="ownerField"
-                allowedTypes={allowedOwnerTypes}
-              />
-            </td>
-          </tr>
-          <tr>
-            <FieldPickerTitle title="Due Date" />
-            <FieldPickerTitle title="Summary" />
-          </tr>
-          <tr>
-            <td>
-              <FieldPickerSynced
-                table={table}
-                shouldAllowPickingNone="true"
-                globalConfigKey="dueDateField"
-                allowedTypes={allowedDateTypes}
-              />
-            </td>
-            <td>
-              <FieldPickerSynced
-                table={table}
-                shouldAllowPickingNone="true"
-                globalConfigKey="summaryField"
-                allowedTypes={allowedStringTypes}
-              />
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <FieldPickerTitle title="Subject" />
+              <FieldPickerTitle title="Owner" />
+            </tr>
+            <tr>
+              <td>
+                <FieldPickerSynced
+                  table={table}
+                  globalConfigKey="subjectField"
+                  allowedTypes={allowedStringTypes}
+                />
+              </td>
+              <td>
+                <FieldPickerSynced
+                  table={table}
+                  shouldAllowPickingNone={true}
+                  globalConfigKey="ownerField"
+                  allowedTypes={allowedOwnerTypes}
+                />
+              </td>
+            </tr>
+            <tr>
+              <FieldPickerTitle title="Due Date" />
+              <FieldPickerTitle title="Summary" />
+            </tr>
+            <tr>
+              <td>
+                <FieldPickerSynced
+                  table={table}
+                  shouldAllowPickingNone={true}
+                  globalConfigKey="dueDateField"
+                  allowedTypes={allowedDateTypes}
+                />
+              </td>
+              <td>
+                <FieldPickerSynced
+                  table={table}
+                  shouldAllowPickingNone={true}
+                  globalConfigKey="summaryField"
+                  allowedTypes={allowedStringTypes}
+                />
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     );
@@ -196,7 +204,7 @@ function TodoBlock() {
           actionText="Remind"
           iconName="bell"
           record={record}
-          clickAction={expandRecord}
+          clickAction={sendReminder}
         />
 
         <ActionButton
@@ -212,7 +220,6 @@ function TodoBlock() {
               width: '60%',
               display: 'inline-block',
               fontSize: '.7rem',
-              fontStyle: 'italic',
               color: '#666',
               fontWeight: 400,
               float: 'left'
@@ -232,7 +239,7 @@ function TodoBlock() {
               ' '
             )}
             {config.get('summaryField') ? (
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '100%', fontStyle: 'italic' }}>
                 {record.getCellValueAsString(config.get('summaryField'))}
               </div>
             ) : (
@@ -254,6 +261,40 @@ function TodoBlock() {
           </div>
         </div>
       </div>
+    );
+  }
+
+  function sendReminder(record) {
+    console.log(record);
+    // console.log(record._data.cellValuesByFieldId);
+    // console.log(globalConfig._kvStore);
+    // console.log(`${ENV.DEV.BASE_API}send_reminder`);
+
+    const payload = {
+      config: globalConfig._kvStore,
+      record: record._data.cellValuesByFieldId,
+      base: _.pick(record._baseData, [
+        'id',
+        'name',
+        'currentUserId',
+        'collaboratorsById'
+      ])
+    };
+    console.log(JSON.stringify(payload));
+
+    request.post(
+      {
+        headers: { 'content-type': 'application/json' },
+        url: `${ENV.DEV.BASE_API}send_reminder`,
+        body: JSON.stringify(payload)
+      },
+      function(error, response, body) {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log(body);
+        }
+      }
     );
   }
 
