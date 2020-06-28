@@ -5,13 +5,14 @@ import {
   useBase,
   useRecords,
   useGlobalConfig,
-  Icon,
-  useWatchable
+  useWatchable,
+  ViewportConstraint
 } from '@airtable/blocks/ui';
 import { cursor } from '@airtable/blocks';
 import Settings from './Settings';
 import Reminder from './Reminder';
 import { isRecordEmpty } from './utils/recordHelpers';
+import { Button } from '@airtable/blocks/ui';
 
 function ReminderBlock() {
   const base = useBase();
@@ -34,8 +35,8 @@ function ReminderBlock() {
 
   const tasks = records
     ? records
-        .filter(r => !isRecordEmpty(r))
-        .map(record => {
+        .filter((r) => !isRecordEmpty(r))
+        .map((record) => {
           return (
             <Reminder
               key={record.id}
@@ -49,6 +50,7 @@ function ReminderBlock() {
 
   return (
     <>
+      <ViewportConstraint minSize={{ width: 330 }} />
       {/* Settings Toggle */}
       <div style={{ width: '100%', display: 'inline-block' }}>
         <div
@@ -63,7 +65,9 @@ function ReminderBlock() {
             setShowSettings(isSettingsVisible ? false : true);
           }}
         >
-          <Icon name="settings" size={16} />
+          <Button variant="secondary" icon="cog">
+            Settings
+          </Button>
         </div>
       </div>
 
