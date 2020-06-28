@@ -5,15 +5,23 @@ import {
   useBase,
   useRecords,
   useGlobalConfig,
-  Icon
+  Icon,
+  useWatchable
 } from '@airtable/blocks/ui';
+import { cursor } from '@airtable/blocks';
 import Settings from './Settings';
 import Reminder from './Reminder';
+import { isRecordEmpty } from './utils/recordHelpers';
 
 function ReminderBlock() {
   const base = useBase();
 
+  // useWatchable(cursor, ['activeTableId', 'activeViewId']);
+  // const tableId = cursor.activeTableId;
+  // const viewId = cursor.activeViewId;
+
   const globalConfig = useGlobalConfig();
+
   const tableId = globalConfig.get('selectedTableId');
   const viewId = globalConfig.get('selectedViewId');
   const table = base.getTableByIdIfExists(tableId);
@@ -23,23 +31,25 @@ function ReminderBlock() {
   const [isSettingsVisible, setShowSettings] = useState(
     !(tableId && viewId && globalConfig.get('subjectField'))
   );
-  console.log(`1: ${isSettingsVisible}`);
 
   const tasks = records
-    ? records.map(record => {
-        return (
-          <Reminder
-            key={record.id}
-            record={record}
-            config={globalConfig}
-            table={table}
-          />
-        );
-      })
+    ? records
+        .filter(r => !isRecordEmpty(r))
+        .map(record => {
+          return (
+            <Reminder
+              key={record.id}
+              record={record}
+              config={globalConfig}
+              table={table}
+            />
+          );
+        })
     : null;
 
   return (
     <>
+      {/* Settings Toggle */}
       <div style={{ width: '100%', display: 'inline-block' }}>
         <div
           style={{
@@ -56,7 +66,11 @@ function ReminderBlock() {
           <Icon name="settings" size={16} />
         </div>
       </div>
+
+      {/* Settings */}
       <Settings isOpen={isSettingsVisible} table={table} />
+
+      {/* Array of Reminders */}
       {tasks}
     </>
   );

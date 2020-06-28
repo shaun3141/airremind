@@ -12,7 +12,6 @@ export function getDueDate(config, table, record) {
     ).startOf('day');
     let daysDiff =
       moment.duration(dueDate - now, 'millisecond') / 1000 / 60 / 60 / 24;
-    console.log(daysDiff);
     if (daysDiff > 1) {
       dueDateMessage = `Due in ${daysDiff} days`;
     } else if (daysDiff === 1) {
