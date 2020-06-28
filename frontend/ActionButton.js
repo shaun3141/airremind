@@ -8,7 +8,7 @@ function ActionButton({ actionText, iconName, record, clickAction, ...rest }) {
       size="small"
       style={{
         transition: '0.15s all ease',
-        padding: 0
+        padding: '0 4px'
       }}
       icon={iconName}
       onClick={() => {

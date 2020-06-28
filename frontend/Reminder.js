@@ -1,49 +1,47 @@
 import React from 'react';
-import {
-  expandRecord,
-  CellRenderer,
-  Box,
-  Text,
-  Icon
-} from '@airtable/blocks/ui';
-import { sendReminder } from './utils/sendReminder';
-import ActionButton from './ActionButton';
+import { expandRecord, CellRenderer, Box, Text } from '@airtable/blocks/ui';
+
 import { getDueDate } from './utils/getDueDate';
 import { cursor } from '@airtable/blocks';
+import ActionButton from './ActionButton';
+import RemindModal from './RemindModal';
 
 function Reminder({ record, config, table }) {
-  const ownerField =
-    config.get([cursor.activeViewId, 'ownerField']) &&
-    table.getFieldById(config.get([cursor.activeViewId, 'ownerField']))
-      ? table.getFieldById(config.get([cursor.activeViewId, 'ownerField']))
-      : null;
-
+  const ownerField = config.get([cursor.activeViewId, 'ownerField']);
   const subjectField = config.get([cursor.activeViewId, 'subjectField']);
+  const summaryField = config.get([cursor.activeViewId, 'summaryField']);
+  const dueDateField = config.get([cursor.activeViewId, 'dueDateField']);
+
+  const Owner = () => {
+    const owner = record.getCellValueAsString(ownerField);
+
+    return ownerField && owner ? (
+      <CellRenderer
+        field={table.getFieldById(ownerField)}
+        record={record}
+        cellStyle={{
+          marginLeft: '-6px'
+        }}
+      />
+    ) : (
+      'Unassigned'
+    );
+  };
 
   return (
-    <div
-      style={{
-        padding: 12,
-        borderBottom: '1px solid #ddd',
-        color: '#4D4D4D',
-        fontWeight: 600
-      }}
-    >
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Text size="large" fontWeight="600">
-          {/* <Icon name="checkboxUnchecked" size={16} /> */}
+    <Box padding={3} borderBottom="1px solid #ddd">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+      >
+        <Text size="large" fontWeight="600" marginTop={1} marginRight={2}>
           {subjectField
             ? record.getCellValueAsString(subjectField) || '(Untitled)'
             : record.primaryCellValueAsString || '(Untitled)'}
         </Text>
-        <Box>
-          <ActionButton
-            actionText="Remind"
-            iconName="bell"
-            record={record}
-            clickAction={() => sendReminder(record, config)}
-            marginRight={2}
-          />
+        <Box minWidth="134px">
+          <RemindModal record={record} config={config} />
           <ActionButton
             actionText="Edit"
             iconName="edit"
@@ -59,38 +57,16 @@ function Reminder({ record, config, table }) {
         paddingTop={1}
       >
         <Box>
-          {config.get([cursor.activeViewId, 'ownerField']) ? (
-            record.getCellValueAsString(
-              config.get([cursor.activeViewId, 'ownerField'])
-            ) ? (
-              <CellRenderer
-                field={ownerField}
-                record={record}
-                cellStyle={{
-                  'margin-left': '-6px'
-                }}
-              />
-            ) : (
-              'Unassigned'
-            )
-          ) : (
-            ' '
-          )}
-          <Text fontStyle="italic" textColor="light" marginTop={2}>
-            {config.get([cursor.activeViewId, 'summaryField'])
-              ? record.getCellValueAsString(
-                  config.get([cursor.activeViewId, 'summaryField'])
-                )
-              : ' '}
-          </Text>
+          <Owner />
         </Box>
-        <Text fontWeight="600" minWidth="110px">
-          {config.get([cursor.activeViewId, 'dueDateField'])
-            ? getDueDate(config, table, record)
-            : ' '}
+        <Text fontWeight="600" minWidth="110px" textColor="light" marginTop={1}>
+          {dueDateField ? getDueDate(config, table, record) : ' '}
         </Text>
       </Box>
-    </div>
+      <Text fontStyle="italic" textColor="light" marginTop={2}>
+        {summaryField ? record.getCellValueAsString(summaryField) : ' '}
+      </Text>
+    </Box>
   );
 }
 
