@@ -3,14 +3,16 @@ import { expandRecord, CellRenderer, Icon } from '@airtable/blocks/ui';
 import { sendReminder } from './utils/sendReminder';
 import ActionButton from './ActionButton';
 import { getDueDate } from './utils/getDueDate';
+import { cursor } from '@airtable/blocks';
 
 // TODO: Figure out stylesheet + hover
 // background-color: rgba(0,0,0,0.05);
 // transition: .085s background-color ease-in;
 function Reminder({ record, config, table }) {
   const ownerField =
-    config.get('ownerField') && table.getFieldById(config.get('ownerField'))
-      ? table.getFieldById(config.get('ownerField'))
+    config.get([cursor.activeViewId, 'ownerField']) &&
+    table.getFieldById(config.get([cursor.activeViewId, 'ownerField']))
+      ? table.getFieldById(config.get([cursor.activeViewId, 'ownerField']))
       : null;
 
   return (
@@ -30,9 +32,10 @@ function Reminder({ record, config, table }) {
           style={{ display: 'inline-block', marginRight: 5 }}
         /> */}
         {/* <Icon name="checkboxUnchecked" size={16} /> */}
-        {config.get('subjectField')
-          ? record.getCellValueAsString(config.get('subjectField')) ||
-            '(Untitled)'
+        {config.get([cursor.activeViewId, 'subjectField'])
+          ? record.getCellValueAsString(
+              config.get([cursor.activeViewId, 'subjectField'])
+            ) || '(Untitled)'
           : record.primaryCellValueAsString || '(Untitled)'}
       </div>
 
@@ -61,8 +64,10 @@ function Reminder({ record, config, table }) {
             float: 'left'
           }}
         >
-          {config.get('ownerField') ? (
-            record.getCellValueAsString(config.get('ownerField')) ? (
+          {config.get([cursor.activeViewId, 'ownerField']) ? (
+            record.getCellValueAsString(
+              config.get([cursor.activeViewId, 'ownerField'])
+            ) ? (
               <CellRenderer
                 field={ownerField}
                 record={record}
@@ -74,9 +79,11 @@ function Reminder({ record, config, table }) {
           ) : (
             ' '
           )}
-          {config.get('summaryField') ? (
+          {config.get([cursor.activeViewId, 'summaryField']) ? (
             <div style={{ width: '100%', fontStyle: 'italic' }}>
-              {record.getCellValueAsString(config.get('summaryField'))}
+              {record.getCellValueAsString(
+                config.get([cursor.activeViewId, 'summaryField'])
+              )}
             </div>
           ) : (
             ' '
@@ -93,7 +100,9 @@ function Reminder({ record, config, table }) {
             float: 'right'
           }}
         >
-          {config.get('dueDateField') ? getDueDate(config, table, record) : ' '}
+          {config.get([cursor.activeViewId, 'dueDateField'])
+            ? getDueDate(config, table, record)
+            : ' '}
         </div>
       </div>
     </div>

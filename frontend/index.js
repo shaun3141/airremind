@@ -16,20 +16,20 @@ import { isRecordEmpty } from './utils/recordHelpers';
 function ReminderBlock() {
   const base = useBase();
 
-  // useWatchable(cursor, ['activeTableId', 'activeViewId']);
-  // const tableId = cursor.activeTableId;
-  // const viewId = cursor.activeViewId;
+  useWatchable(cursor, ['activeTableId', 'activeViewId']);
+  const tableId = cursor.activeTableId;
+  const viewId = cursor.activeViewId;
 
   const globalConfig = useGlobalConfig();
 
-  const tableId = globalConfig.get('selectedTableId');
-  const viewId = globalConfig.get('selectedViewId');
+  // const tableId = globalConfig.get('selectedTableId');
+  // const viewId = globalConfig.get('selectedViewId');
   const table = base.getTableByIdIfExists(tableId);
   const view = table ? table.getViewByIdIfExists(viewId) : null;
   const records = useRecords(view);
 
   const [isSettingsVisible, setShowSettings] = useState(
-    !(tableId && viewId && globalConfig.get('subjectField'))
+    !(tableId && viewId && globalConfig.get([viewId, 'subjectField']))
   );
 
   const tasks = records

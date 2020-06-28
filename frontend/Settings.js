@@ -2,8 +2,10 @@ import React from 'react';
 import {
   TablePickerSynced,
   ViewPickerSynced,
-  FieldPickerSynced
+  FieldPickerSynced,
+  useWatchable
 } from '@airtable/blocks/ui';
+import { cursor } from '@airtable/blocks';
 import { FieldType } from '@airtable/blocks/models';
 
 function FieldPickerTitle({ title }) {
@@ -51,8 +53,8 @@ function Settings({ table, isOpen }) {
 
   return (
     <div style={{ display: settingsDiplay }}>
-      <TablePickerSynced globalConfigKey="selectedTableId" />
-      <ViewPickerSynced table={table} globalConfigKey="selectedViewId" />
+      {/* <TablePickerSynced globalConfigKey="selectedTableId" />
+      <ViewPickerSynced table={table} globalConfigKey="selectedViewId" /> */}
       <table style={{ width: '100%' }}>
         <tbody>
           <tr>
@@ -63,7 +65,7 @@ function Settings({ table, isOpen }) {
             <td>
               <FieldPickerSynced
                 table={table}
-                globalConfigKey="subjectField"
+                globalConfigKey={[cursor.activeViewId, 'subjectField']}
                 allowedTypes={allowedStringTypes}
               />
             </td>
@@ -71,7 +73,7 @@ function Settings({ table, isOpen }) {
               <FieldPickerSynced
                 table={table}
                 shouldAllowPickingNone={true}
-                globalConfigKey="ownerField"
+                globalConfigKey={[cursor.activeViewId, 'ownerField']}
                 allowedTypes={allowedOwnerTypes}
               />
             </td>
@@ -85,7 +87,7 @@ function Settings({ table, isOpen }) {
               <FieldPickerSynced
                 table={table}
                 shouldAllowPickingNone={true}
-                globalConfigKey="dueDateField"
+                globalConfigKey={[cursor.activeViewId, 'dueDateField']}
                 allowedTypes={allowedDateTypes}
               />
             </td>
@@ -93,7 +95,7 @@ function Settings({ table, isOpen }) {
               <FieldPickerSynced
                 table={table}
                 shouldAllowPickingNone={true}
-                globalConfigKey="summaryField"
+                globalConfigKey={[cursor.activeViewId, 'summaryField']}
                 allowedTypes={allowedStringTypes}
               />
             </td>

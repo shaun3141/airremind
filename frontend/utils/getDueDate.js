@@ -1,14 +1,17 @@
 import moment from 'moment';
+import { cursor } from '@airtable/blocks';
 
 export function getDueDate(config, table, record) {
   let dueDateMessage = '';
   if (
-    config.get('dueDateField') &&
-    table.getFieldById(config.get('dueDateField'))
+    config.get([cursor.activeViewId, 'dueDateField']) &&
+    table.getFieldById(config.get([cursor.activeViewId, 'dueDateField']))
   ) {
     let now = moment().startOf('day');
     let dueDate = moment(
-      record.getCellValueAsString(config.get('dueDateField'))
+      record.getCellValueAsString(
+        config.get([cursor.activeViewId, 'dueDateField'])
+      )
     ).startOf('day');
     let daysDiff =
       moment.duration(dueDate - now, 'millisecond') / 1000 / 60 / 60 / 24;
