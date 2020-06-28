@@ -7,23 +7,40 @@ import ActionButton from './ActionButton';
 import RemindModal from './RemindModal';
 
 function Reminder({ record, config, table }) {
-  const ownerField =
-    config.get([cursor.activeViewId, 'ownerField']) &&
-    table.getFieldById(config.get([cursor.activeViewId, 'ownerField']))
-      ? table.getFieldById(config.get([cursor.activeViewId, 'ownerField']))
-      : null;
-
+  const ownerField = config.get([cursor.activeViewId, 'ownerField']);
   const subjectField = config.get([cursor.activeViewId, 'subjectField']);
+  const summaryField = config.get([cursor.activeViewId, 'summaryField']);
+  const dueDateField = config.get([cursor.activeViewId, 'dueDateField']);
+
+  const Owner = () => {
+    const owner = record.getCellValueAsString(ownerField);
+
+    return ownerField && owner ? (
+      <CellRenderer
+        field={table.getFieldById(ownerField)}
+        record={record}
+        cellStyle={{
+          marginLeft: '-6px'
+        }}
+      />
+    ) : (
+      'Unassigned'
+    );
+  };
 
   return (
     <Box padding={3} borderBottom="1px solid #ddd">
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Text size="large" fontWeight="600">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+      >
+        <Text size="large" fontWeight="600" marginTop={1} marginRight={2}>
           {subjectField
             ? record.getCellValueAsString(subjectField) || '(Untitled)'
             : record.primaryCellValueAsString || '(Untitled)'}
         </Text>
-        <Box>
+        <Box minWidth="134px">
           <RemindModal record={record} config={config} />
           <ActionButton
             actionText="Edit"
@@ -40,36 +57,14 @@ function Reminder({ record, config, table }) {
         paddingTop={1}
       >
         <Box>
-          {config.get([cursor.activeViewId, 'ownerField']) ? (
-            record.getCellValueAsString(
-              config.get([cursor.activeViewId, 'ownerField'])
-            ) ? (
-              <CellRenderer
-                field={ownerField}
-                record={record}
-                cellStyle={{
-                  marginLeft: '-6px'
-                }}
-              />
-            ) : (
-              'Unassigned'
-            )
-          ) : (
-            ' '
-          )}
+          <Owner />
         </Box>
         <Text fontWeight="600" minWidth="110px" textColor="light" marginTop={1}>
-          {config.get([cursor.activeViewId, 'dueDateField'])
-            ? getDueDate(config, table, record)
-            : ' '}
+          {dueDateField ? getDueDate(config, table, record) : ' '}
         </Text>
       </Box>
       <Text fontStyle="italic" textColor="light" marginTop={2}>
-        {config.get([cursor.activeViewId, 'summaryField'])
-          ? record.getCellValueAsString(
-              config.get([cursor.activeViewId, 'summaryField'])
-            )
-          : ' '}
+        {summaryField ? record.getCellValueAsString(summaryField) : ' '}
       </Text>
     </Box>
   );
