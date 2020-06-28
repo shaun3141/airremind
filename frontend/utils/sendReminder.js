@@ -1,9 +1,9 @@
-import * as request from "request";
+import * as request from 'request';
 const ENV = {
   DEV: {
-    BASE_API: "https://airreminder.herokuapp.com/",
+    BASE_API: 'https://airreminder.herokuapp.com/'
   },
-  PROD: {},
+  PROD: {}
 };
 
 export function sendReminder(record, config) {
@@ -15,20 +15,20 @@ export function sendReminder(record, config) {
     config: config._kvStore,
     record: record._data.cellValuesByFieldId,
     base: _.pick(record._baseData, [
-      "id",
-      "name",
-      "currentUserId",
-      "collaboratorsById",
-    ]),
+      'id',
+      'name',
+      'currentUserId',
+      'collaboratorsById'
+    ])
   };
 
   request.post(
     {
-      headers: { "content-type": "application/json" },
+      headers: { 'content-type': 'application/json' },
       url: `${ENV.DEV.BASE_API}send_reminder`,
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload)
     },
-    function (error, response, body) {
+    function(error, response, body) {
       if (error) {
         console.error(error);
       } else {
