@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  TablePickerSynced,
-  ViewPickerSynced,
-  FieldPickerSynced,
-  useWatchable
-} from '@airtable/blocks/ui';
+import { FieldPickerSynced, useGlobalConfig } from '@airtable/blocks/ui';
 import { cursor } from '@airtable/blocks';
 import { FieldType } from '@airtable/blocks/models';
 
@@ -13,6 +8,8 @@ function FieldPickerTitle({ title }) {
 }
 
 function Settings({ table, isOpen }) {
+  const globalConfig = useGlobalConfig();
+
   const allowedStringTypes = [
     FieldType.AUTO_NUMBER,
     FieldType.CHECKBOX,
@@ -51,10 +48,64 @@ function Settings({ table, isOpen }) {
 
   const settingsDiplay = isOpen ? 'block' : 'none';
 
+  // Auto-pick best fields for the view:
+  // Get list of all fields from table
+  // Double check field is in view
+  // If globalConfig is empty, set it there
+
+  for (let field of table.fields) {
+    console.log(field.name + ' ' + field.type);
+  }
+
+  if (!globalConfig.get([cursor.activeViewId, 'subjectField'])) {
+    globalConfig.setAsync(
+      [cursor.activeViewId, 'subjectField'],
+      table.primaryField.id
+    );
+  }
+
+  const defaultOwnerFields = table.fields.filter((f) =>
+    allowedOwnerTypes.includes(f.type)
+  );
+  if (
+    !globalConfig.get([cursor.activeViewId, 'ownerField']) &&
+    defaultOwnerFields.length
+  ) {
+    globalConfig.setAsync(
+      [cursor.activeViewId, 'ownerField'],
+      defaultOwnerFields[0].id
+    );
+  }
+
+  const defaultDueDateFields = table.fields.filter((f) =>
+    allowedDateTypes.includes(f.type)
+  );
+  if (
+    !globalConfig.get([cursor.activeViewId, 'dueDateField']) &&
+    defaultDueDateFields.length
+  ) {
+    globalConfig.setAsync(
+      [cursor.activeViewId, 'dueDateField'],
+      defaultDueDateFields[0].id
+    );
+  }
+
+  const defaultSummaryFields = table.fields.filter(
+    (f) =>
+      allowedStringTypes.includes(f.type) &&
+      !allowedDateTypes.includes(f.type) &&
+      !allowedOwnerTypes.includes(f.type) &&
+      table.primaryField.id != f.id
+  );
+  if (!globalConfig.get([cursor.activeViewId, 'summaryField'])) {
+    globalConfig.setAsync(
+      [cursor.activeViewId, 'summaryField'],
+      defaultSummaryFields[0].id
+    );
+  }
+
   return (
     <div style={{ display: settingsDiplay }}>
-      {/* <TablePickerSynced globalConfigKey="selectedTableId" />
-      <ViewPickerSynced table={table} globalConfigKey="selectedViewId" /> */}
       <table style={{ width: '100%' }}>
         <tbody>
           <tr>
