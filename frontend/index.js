@@ -77,7 +77,3 @@ function ReminderBlock() {
 }
 
 initializeBlock(() => <ReminderBlock />);
-// TODO:
-// If only 1 view exists, don't ask for view
-// Make Card View with Flex
-// Make card with dynamic sizes

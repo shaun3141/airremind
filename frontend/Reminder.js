@@ -13,7 +13,7 @@ function Reminder({ record, config, table }) {
   const dueDateField = config.get([cursor.activeViewId, 'dueDateField']);
 
   const Owner = () => {
-    const owner = record.getCellValueAsString(ownerField);
+    const owner = ownerField && record.getCellValueAsString(ownerField);
 
     return ownerField && owner ? (
       <CellRenderer

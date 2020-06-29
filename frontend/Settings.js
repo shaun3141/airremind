@@ -48,60 +48,47 @@ function Settings({ table, isOpen }) {
 
   const settingsDiplay = isOpen ? 'block' : 'none';
 
-  // Auto-pick best fields for the view:
-  // Get list of all fields from table
-  // Double check field is in view
-  // If globalConfig is empty, set it there
-
-  for (let field of table.fields) {
-    console.log(field.name + ' ' + field.type);
-  }
-
+  // First time initializing this table view, try to auto-pick fields:
   if (!globalConfig.get([cursor.activeViewId, 'subjectField'])) {
     globalConfig.setAsync(
       [cursor.activeViewId, 'subjectField'],
       table.primaryField.id
     );
-  }
 
-  const defaultOwnerFields = table.fields.filter((f) =>
-    allowedOwnerTypes.includes(f.type)
-  );
-  if (
-    !globalConfig.get([cursor.activeViewId, 'ownerField']) &&
-    defaultOwnerFields.length
-  ) {
-    globalConfig.setAsync(
-      [cursor.activeViewId, 'ownerField'],
-      defaultOwnerFields[0].id
+    const defaultOwnerFields = table.fields.filter((f) =>
+      allowedOwnerTypes.includes(f.type)
     );
-  }
+    if (defaultOwnerFields.length) {
+      globalConfig.setAsync(
+        [cursor.activeViewId, 'ownerField'],
+        defaultOwnerFields[0].id
+      );
+    }
 
-  const defaultDueDateFields = table.fields.filter((f) =>
-    allowedDateTypes.includes(f.type)
-  );
-  if (
-    !globalConfig.get([cursor.activeViewId, 'dueDateField']) &&
-    defaultDueDateFields.length
-  ) {
-    globalConfig.setAsync(
-      [cursor.activeViewId, 'dueDateField'],
-      defaultDueDateFields[0].id
+    const defaultDueDateFields = table.fields.filter((f) =>
+      allowedDateTypes.includes(f.type)
     );
-  }
+    if (defaultDueDateFields.length) {
+      globalConfig.setAsync(
+        [cursor.activeViewId, 'dueDateField'],
+        defaultDueDateFields[0].id
+      );
+    }
 
-  const defaultSummaryFields = table.fields.filter(
-    (f) =>
-      allowedStringTypes.includes(f.type) &&
-      !allowedDateTypes.includes(f.type) &&
-      !allowedOwnerTypes.includes(f.type) &&
-      table.primaryField.id != f.id
-  );
-  if (!globalConfig.get([cursor.activeViewId, 'summaryField'])) {
-    globalConfig.setAsync(
-      [cursor.activeViewId, 'summaryField'],
-      defaultSummaryFields[0].id
+    const defaultSummaryFields = table.fields.filter(
+      (f) =>
+        allowedStringTypes.includes(f.type) &&
+        !allowedDateTypes.includes(f.type) &&
+        !allowedOwnerTypes.includes(f.type) &&
+        f.type != 'checkbox' && // checkbox just looks bad when unchecked
+        table.primaryField.id != f.id
     );
+    if (defaultSummaryFields.length) {
+      globalConfig.setAsync(
+        [cursor.activeViewId, 'summaryField'],
+        defaultSummaryFields[0].id
+      );
+    }
   }
 
   return (
@@ -109,8 +96,12 @@ function Settings({ table, isOpen }) {
       <table style={{ width: '100%' }}>
         <tbody>
           <tr>
-            <FieldPickerTitle title="Subject" />
-            <FieldPickerTitle title="Owner" />
+            <td style={{ width: '50%' }}>
+              <FieldPickerTitle title="Subject" />
+            </td>
+            <td style={{ width: '50%' }}>
+              <FieldPickerTitle title="Owner" />
+            </td>
           </tr>
           <tr>
             <td>
@@ -130,8 +121,12 @@ function Settings({ table, isOpen }) {
             </td>
           </tr>
           <tr>
-            <FieldPickerTitle title="Due Date" />
-            <FieldPickerTitle title="Summary" />
+            <td style={{ width: '50%' }}>
+              <FieldPickerTitle title="Due Date" />
+            </td>
+            <td style={{ width: '50%' }}>
+              <FieldPickerTitle title="Summary" />
+            </td>
           </tr>
           <tr>
             <td>
