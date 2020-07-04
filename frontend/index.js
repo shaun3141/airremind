@@ -9,8 +9,8 @@ import {
   ViewportConstraint
 } from '@airtable/blocks/ui';
 import { cursor, session } from '@airtable/blocks';
-import Settings from './Settings';
-import Reminder from './Reminder';
+import Settings from './components/Settings';
+import Reminder from './components/Reminder';
 import { isRecordEmpty } from './utils/recordHelpers';
 import { Button, Box } from '@airtable/blocks/ui';
 

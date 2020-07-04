@@ -9,7 +9,7 @@ import {
   Box
 } from '@airtable/blocks/ui';
 
-import { sendReminder } from './utils/sendReminder';
+import { sendReminder } from '../utils/sendReminder';
 import ActionButton from './ActionButton';
 
 const RemindModal = ({ record, config, hasOwner }) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { expandRecord, CellRenderer, Box, Text } from '@airtable/blocks/ui';
 
-import { getDueDate } from './utils/getDueDate';
+import { getDueDate } from '../utils/getDueDate';
 import { cursor } from '@airtable/blocks';
 import ActionButton from './ActionButton';
 import RemindModal from './RemindModal';
