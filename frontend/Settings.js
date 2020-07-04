@@ -120,7 +120,7 @@ function Settings({ table, isOpen }) {
           </tr>
           <tr>
             <FieldPickerTitle title="Due Date" />
-            <FieldPickerTitle title="Summary" />
+            <FieldPickerTitle title="Details" />
           </tr>
           <tr>
             <td>
