@@ -5,7 +5,9 @@ export function getDueDate(config, table, record) {
   let dueDateMessage = '';
   if (
     config.get([cursor.activeViewId, 'dueDateField']) &&
-    table.getFieldById(config.get([cursor.activeViewId, 'dueDateField']))
+    table.getFieldByIdIfExists(
+      config.get([cursor.activeViewId, 'dueDateField'])
+    )
   ) {
     let now = moment().startOf('day');
     let dueDate = moment(
