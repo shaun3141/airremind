@@ -6,10 +6,9 @@ import {
   useRecords,
   useGlobalConfig,
   useWatchable,
-  ViewportConstraint,
-  Tooltip
+  ViewportConstraint
 } from '@airtable/blocks/ui';
-import { cursor } from '@airtable/blocks';
+import { cursor, session } from '@airtable/blocks';
 import Settings from './Settings';
 import Reminder from './Reminder';
 import { isRecordEmpty } from './utils/recordHelpers';
@@ -61,14 +60,14 @@ function ReminderBlock() {
             setShowSettings(isSettingsVisible ? false : true);
           }}
         >
-          <Button variant="secondary" icon="cog">
-            Settings
-          </Button>
+          {session.hasPermissionToCreateRecords() && (
+            <Button variant="secondary" icon="cog">
+              Settings
+            </Button>
+          )}
         </div>
       </div>
-      {/* Settings */}
       <Settings isOpen={isSettingsVisible} table={table} />
-      {/* Array of Reminders */}
       {tasks}
     </>
   );
