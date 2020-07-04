@@ -9,13 +9,14 @@ import RemindModal from './RemindModal';
 function Reminder({ record, config, table }) {
   const ownerField = config.get([cursor.activeViewId, 'ownerField']);
   const subjectField = config.get([cursor.activeViewId, 'subjectField']);
-  const summaryField = config.get([cursor.activeViewId, 'summaryField']);
+  const detailsField = config.get([cursor.activeViewId, 'detailsField']);
   const dueDateField = config.get([cursor.activeViewId, 'dueDateField']);
 
-  const Owner = () => {
-    const owner = ownerField && record.getCellValueAsString(ownerField);
+  const owner = ownerField && record.getCellValueAsString(ownerField);
+  const hasOwner = ownerField && owner;
 
-    return ownerField && owner ? (
+  const Owner = () => {
+    return hasOwner ? (
       <CellRenderer
         field={table.getFieldById(ownerField)}
         record={record}
@@ -40,8 +41,8 @@ function Reminder({ record, config, table }) {
             ? record.getCellValueAsString(subjectField) || '(Untitled)'
             : record.primaryCellValueAsString || '(Untitled)'}
         </Text>
-        <Box minWidth="134px">
-          <RemindModal record={record} config={config} />
+        <Box minWidth="146px">
+          <RemindModal record={record} config={config} hasOwner={hasOwner} />
           <ActionButton
             actionText="Edit"
             iconName="edit"
@@ -64,7 +65,7 @@ function Reminder({ record, config, table }) {
         </Text>
       </Box>
       <Text fontStyle="italic" textColor="light" marginTop={2}>
-        {summaryField ? record.getCellValueAsString(summaryField) : ' '}
+        {detailsField ? record.getCellValueAsString(detailsField) : ' '}
       </Text>
     </Box>
   );
