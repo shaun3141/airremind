@@ -6,7 +6,8 @@ import {
   useRecords,
   useGlobalConfig,
   useWatchable,
-  ViewportConstraint
+  ViewportConstraint,
+  Tooltip
 } from '@airtable/blocks/ui';
 import { cursor } from '@airtable/blocks';
 import Settings from './Settings';
@@ -25,9 +26,7 @@ function ReminderBlock() {
   const view = table ? table.getViewByIdIfExists(cursor.activeViewId) : null;
   const records = useRecords(view);
 
-  const [isSettingsVisible, setShowSettings] = useState(
-    !globalConfig.get([cursor.activeViewId, 'subjectField'])
-  );
+  const [isSettingsVisible, setShowSettings] = useState(false);
 
   const tasks = records
     ? records
@@ -47,6 +46,7 @@ function ReminderBlock() {
   return (
     <>
       <ViewportConstraint minSize={{ width: 330 }} />
+
       {/* Settings Toggle */}
       <div style={{ width: '100%', display: 'inline-block' }}>
         <div
@@ -66,10 +66,8 @@ function ReminderBlock() {
           </Button>
         </div>
       </div>
-
       {/* Settings */}
       <Settings isOpen={isSettingsVisible} table={table} />
-
       {/* Array of Reminders */}
       {tasks}
     </>
