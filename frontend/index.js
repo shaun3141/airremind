@@ -12,7 +12,7 @@ import { cursor, session } from '@airtable/blocks';
 import Settings from './Settings';
 import Reminder from './Reminder';
 import { isRecordEmpty } from './utils/recordHelpers';
-import { Button } from '@airtable/blocks/ui';
+import { Button, Box } from '@airtable/blocks/ui';
 
 function ReminderBlock() {
   const base = useBase();
@@ -27,7 +27,7 @@ function ReminderBlock() {
 
   const [isSettingsVisible, setShowSettings] = useState(false);
 
-  const tasks = records
+  const reminders = records
     ? records
         .filter((r) => !isRecordEmpty(r))
         .map((record) => {
@@ -46,29 +46,32 @@ function ReminderBlock() {
     <>
       <ViewportConstraint minSize={{ width: 330 }} />
 
-      {/* Settings Toggle */}
-      <div style={{ width: '100%', display: 'inline-block' }}>
-        <div
-          style={{
-            float: 'right',
-            display: 'inline-block',
-            padding: 5,
-            color: '#4D4D4D',
-            cursor: 'pointer'
-          }}
-          onClick={() => {
-            setShowSettings(isSettingsVisible ? false : true);
-          }}
-        >
-          {session.hasPermissionToCreateRecords() && (
-            <Button variant="secondary" icon="cog">
-              Settings
-            </Button>
-          )}
-        </div>
-      </div>
-      <Settings isOpen={isSettingsVisible} table={table} />
-      {tasks}
+      {/* Settings */}
+      {session.hasPermissionToCreateRecords() && (
+        <Box>
+          {/* Settings Toggle */}
+          <Box style={{ width: '100%', display: 'inline-block' }}>
+            <Box
+              style={{
+                float: 'right',
+                display: 'inline-block'
+              }}
+              onClick={() => {
+                setShowSettings(isSettingsVisible ? false : true);
+              }}
+            >
+              <Button variant="secondary" icon="cog" style={{ margin: '5px' }}>
+                Settings
+              </Button>
+            </Box>
+          </Box>
+          {/* Actual Settings */}
+          <Settings isOpen={isSettingsVisible} table={table} />
+        </Box>
+      )}
+
+      {/* Reminders */}
+      {reminders}
     </>
   );
 }
