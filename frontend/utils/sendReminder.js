@@ -18,6 +18,7 @@ export function sendReminder(record, config, message) {
   const payload = {
     config: config._kvStore,
     recordId: record.id,
+    viewId: cursor.activeViewId,
     tableId: cursor.activeTableId,
     record: record._data.cellValuesByFieldId,
     message,
