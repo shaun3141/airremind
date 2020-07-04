@@ -1,9 +1,13 @@
+import { cursor } from '@airtable/blocks';
 import * as request from 'request';
+
 const ENV = {
   DEV: {
     BASE_API: 'https://airreminder.herokuapp.com/'
   },
-  PROD: {}
+  PROD: {
+    BASE_API: 'https://airreminder.herokuapp.com/'
+  }
 };
 
 export function sendReminder(record, config, message) {
@@ -13,6 +17,8 @@ export function sendReminder(record, config, message) {
 
   const payload = {
     config: config._kvStore,
+    recordId: record.id,
+    tableId: cursor.activeTableId,
     record: record._data.cellValuesByFieldId,
     message,
     base: _.pick(record._baseData, [
@@ -29,7 +35,7 @@ export function sendReminder(record, config, message) {
       url: `${ENV.DEV.BASE_API}send_reminder`,
       body: JSON.stringify(payload)
     },
-    function (error, response, body) {
+    function(error, response, body) {
       if (error) {
         console.error(error);
       } else {

@@ -4,7 +4,9 @@ import { cursor } from '@airtable/blocks';
 import { FieldType } from '@airtable/blocks/models';
 
 function FieldPickerTitle({ title }) {
-  return <td style={{ fontWeight: 'bold', padding: 3 }}>{title}</td>;
+  return (
+    <td style={{ fontWeight: 'bold', padding: 3, width: '50%' }}>{title}</td>
+  );
 }
 
 function Settings({ table, isOpen }) {
@@ -96,12 +98,8 @@ function Settings({ table, isOpen }) {
       <table style={{ width: '100%' }}>
         <tbody>
           <tr>
-            <td style={{ width: '50%' }}>
-              <FieldPickerTitle title="Subject" />
-            </td>
-            <td style={{ width: '50%' }}>
-              <FieldPickerTitle title="Owner" />
-            </td>
+            <FieldPickerTitle title="Subject" />
+            <FieldPickerTitle title="Owner" />
           </tr>
           <tr>
             <td>
@@ -121,12 +119,8 @@ function Settings({ table, isOpen }) {
             </td>
           </tr>
           <tr>
-            <td style={{ width: '50%' }}>
-              <FieldPickerTitle title="Due Date" />
-            </td>
-            <td style={{ width: '50%' }}>
-              <FieldPickerTitle title="Summary" />
-            </td>
+            <FieldPickerTitle title="Due Date" />
+            <FieldPickerTitle title="Summary" />
           </tr>
           <tr>
             <td>
