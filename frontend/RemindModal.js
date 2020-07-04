@@ -19,7 +19,7 @@ const RemindModal = ({ record, config, hasOwner }) => {
   return (
     <>
       <Tooltip
-        disabled={hasOwner}
+        disabled={hasOwner && true}
         content="Add an owner"
         placementX={Tooltip.placements.CENTER}
         placementY={Tooltip.placements.BOTTOM}
