@@ -1,22 +1,47 @@
 import React, { useState } from 'react';
-import { Button, Dialog, Heading, Text, Input, Box } from '@airtable/blocks/ui';
+import {
+  Tooltip,
+  Button,
+  Dialog,
+  Heading,
+  Text,
+  Input,
+  Box
+} from '@airtable/blocks/ui';
 
 import { sendReminder } from './utils/sendReminder';
 import ActionButton from './ActionButton';
 
-const RemindModal = ({ record, config }) => {
+const RemindModal = ({ record, config, hasOwner }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState('');
 
   return (
     <>
-      <ActionButton
-        actionText="Remind"
-        iconName="bell"
-        record={record}
-        onClick={() => setIsDialogOpen(true)}
-        marginRight={2}
-      />
+      <Tooltip
+        disabled={hasOwner && true}
+        content="Add an owner"
+        placementX={Tooltip.placements.CENTER}
+        placementY={Tooltip.placements.BOTTOM}
+        shouldHideTooltipOnClick={true}
+      >
+        <ActionButton
+          actionText="Remind"
+          style={
+            !hasOwner
+              ? {
+                  cursor: 'default',
+                  opacity: '0.5'
+                }
+              : {}
+          }
+          iconName="bell"
+          record={record}
+          onClick={() => hasOwner && setIsDialogOpen(true)}
+          marginRight={2}
+        />
+      </Tooltip>
+
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)} width="320px">
           <Dialog.CloseButton />

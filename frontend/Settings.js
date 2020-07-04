@@ -77,7 +77,7 @@ function Settings({ table, isOpen }) {
       );
     }
 
-    const defaultSummaryFields = table.fields.filter(
+    const defaultDetailsFields = table.fields.filter(
       (f) =>
         allowedStringTypes.includes(f.type) &&
         !allowedDateTypes.includes(f.type) &&
@@ -85,10 +85,10 @@ function Settings({ table, isOpen }) {
         f.type != 'checkbox' && // checkbox just looks bad when unchecked
         table.primaryField.id != f.id
     );
-    if (defaultSummaryFields.length) {
+    if (defaultDetailsFields.length) {
       globalConfig.setAsync(
-        [cursor.activeViewId, 'summaryField'],
-        defaultSummaryFields[0].id
+        [cursor.activeViewId, 'detailsField'],
+        defaultDetailsFields[0].id
       );
     }
   }
@@ -135,7 +135,7 @@ function Settings({ table, isOpen }) {
               <FieldPickerSynced
                 table={table}
                 shouldAllowPickingNone={true}
-                globalConfigKey={[cursor.activeViewId, 'summaryField']}
+                globalConfigKey={[cursor.activeViewId, 'detailsField']}
                 allowedTypes={allowedStringTypes}
               />
             </td>
