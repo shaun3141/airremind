@@ -7,12 +7,18 @@ import ActionButton from './ActionButton';
 import RemindModal from './RemindModal';
 
 function Reminder({ record, config, table }) {
+  const safelyAccessField = (fieldName) => {
+    const fieldId = config.get([cursor.activeViewId, fieldName]);
+    return table.getFieldByIdIfExists(fieldId);
+  };
+
   const ownerField = config.get([cursor.activeViewId, 'ownerField']);
   const subjectField = config.get([cursor.activeViewId, 'subjectField']);
   const detailsField = config.get([cursor.activeViewId, 'detailsField']);
   const dueDateField = config.get([cursor.activeViewId, 'dueDateField']);
 
-  const owner = ownerField && record.getCellValueAsString(ownerField);
+  const owner =
+    safelyAccessField('ownerField') && record.getCellValueAsString(ownerField);
   const hasOwner = ownerField && owner;
 
   const Owner = () => {
@@ -37,7 +43,7 @@ function Reminder({ record, config, table }) {
         alignItems="flex-start"
       >
         <Text size="large" fontWeight="600" marginTop={1} marginRight={2}>
-          {subjectField
+          {safelyAccessField('subjectField')
             ? record.getCellValueAsString(subjectField) || '(Untitled)'
             : record.primaryCellValueAsString || '(Untitled)'}
         </Text>
@@ -65,7 +71,9 @@ function Reminder({ record, config, table }) {
         </Text>
       </Box>
       <Text fontStyle="italic" textColor="light" marginTop={2}>
-        {detailsField ? record.getCellValueAsString(detailsField) : ' '}
+        {safelyAccessField('detailsField')
+          ? record.getCellValueAsString(detailsField)
+          : ' '}
       </Text>
     </Box>
   );
