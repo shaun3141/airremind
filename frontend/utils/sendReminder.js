@@ -1,5 +1,6 @@
 import { cursor } from '@airtable/blocks';
 import * as request from 'request';
+import { getDueDate } from '../utils/getDueDate';
 
 const ENV = {
   DEV: {
@@ -10,10 +11,9 @@ const ENV = {
   }
 };
 
-export function sendReminder(record, config, message) {
+export function sendReminder(record, config, table, message) {
   // console.log(record._data.cellValuesByFieldId);
   // console.log(globalConfig._kvStore);
-  // console.log(`${ENV.DEV.BASE_API}send_reminder`);
 
   const payload = {
     config: config._kvStore,
@@ -21,6 +21,7 @@ export function sendReminder(record, config, message) {
     viewId: cursor.activeViewId,
     tableId: cursor.activeTableId,
     record: record._data.cellValuesByFieldId,
+    dueDateMessage: getDueDate(config, table, record),
     message,
     base: _.pick(record._baseData, [
       'id',

@@ -48,7 +48,12 @@ function Reminder({ record, config, table }) {
             : record.primaryCellValueAsString || '(Untitled)'}
         </Text>
         <Box minWidth="146px">
-          <RemindModal record={record} config={config} hasOwner={hasOwner} />
+          <RemindModal
+            record={record}
+            config={config}
+            table={table}
+            hasOwner={hasOwner}
+          />
           <ActionButton
             actionText="Edit"
             iconName="edit"

@@ -9,12 +9,15 @@ export function getDueDate(config, table, record) {
       config.get([cursor.activeViewId, 'dueDateField'])
     )
   ) {
-    let now = moment().startOf('day');
-    let dueDate = moment(
+    let now = moment(new Date().toISOString()).startOf('day');
+
+    let dueDateDate = new Date(
       record.getCellValueAsString(
         config.get([cursor.activeViewId, 'dueDateField'])
       )
-    ).startOf('day');
+    ).toISOString();
+    let dueDate = moment(dueDateDate).startOf('day'); // Moment gives error otherwise
+
     let daysDiff =
       moment.duration(dueDate - now, 'millisecond') / 1000 / 60 / 60 / 24;
     if (daysDiff > 1) {

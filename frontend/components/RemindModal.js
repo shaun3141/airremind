@@ -12,7 +12,7 @@ import {
 import { sendReminder } from '../utils/sendReminder';
 import ActionButton from './ActionButton';
 
-const RemindModal = ({ record, config, hasOwner }) => {
+const RemindModal = ({ record, config, table, hasOwner }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -62,7 +62,7 @@ const RemindModal = ({ record, config, hasOwner }) => {
               icon="envelope"
               marginRight={1}
               onClick={() => {
-                sendReminder(record, config, message);
+                sendReminder(record, config, table, message);
                 setIsDialogOpen(false);
               }}
             >
