@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import _ from 'lodash';
 import {
   initializeBlock,
   useBase,
@@ -48,7 +47,7 @@ function ReminderBlock() {
 
       {/* Settings */}
       {session.hasPermissionToCreateRecords() && (
-        <Box>
+        <div>
           {/* Settings Toggle */}
           <Box style={{ width: '100%', display: 'inline-block' }}>
             <Box
@@ -67,7 +66,7 @@ function ReminderBlock() {
           </Box>
           {/* Actual Settings */}
           <Settings isOpen={isSettingsVisible} table={table} />
-        </Box>
+        </div>
       )}
 
       {/* Reminders */}
