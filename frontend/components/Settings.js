@@ -51,7 +51,7 @@ function Settings({ table, isOpen }) {
   const settingsDiplay = isOpen ? 'block' : 'none';
 
   // First time initializing this table view, try to auto-pick fields:
-  if (!globalConfig.get([cursor.activeViewId, 'subjectField'])) {
+  if (!globalConfig.get([cursor.activeViewId])) {
     globalConfig.setAsync(
       [cursor.activeViewId, 'subjectField'],
       table.primaryField.id
